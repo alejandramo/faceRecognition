@@ -69,8 +69,8 @@ class App extends React.Component {
     const height = Number (image.height);
     return {
       leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_col * height,
-      rightCol: width - (clarifaiFace.rigth_col * width),
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - (clarifaiFace.right_col * width),
       bottomRow: height - (clarifaiFace.bottom_row * height)
     }
   }
