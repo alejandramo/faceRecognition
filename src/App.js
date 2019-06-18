@@ -9,7 +9,6 @@ import ImageLinkForm from './Components/ImageLinkForm/ImageLinkForm';
 import './App.css';
 
 
-
 const app = new Clarifai.App({
   apiKey: 'bfa4e73dbf9448dba2d4ebf505dccdd9'
 });
@@ -59,7 +58,26 @@ class App extends React.Component {
     this.state = {
       input: '',
       imageUrl:'',
+      box: {},
     }
+  }
+
+  claculateFaceLocation = (data) => {
+    const clarifaiFace = (data.outputs[0].data.regions[0].region_info.bounding_box);
+    const image = document.getElementById('inputimage');
+    const width = Number (image.width);
+    const height = Number (image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_col * height,
+      rightCol: width - (clarifaiFace.rigth_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height)
+    }
+  }
+
+  displayFaceBox = (box) =>{
+    console.log(box);
+    this.setState({box:box});
   }
   
   onInputChange = (event) => {
@@ -72,14 +90,8 @@ class App extends React.Component {
       .predict(
         Clarifai.FACE_DETECT_MODEL, 
         this.state.input)
-      .then(
-      function(response) {
-        console.log(response.outputs[0].data.regions[0].region_info.bounding_box[0]);
-      },
-      function(err) {
-        // there was an error
-      }
-    );
+      .then(response => this.displayFaceBox(this.claculateFaceLocation(response)))
+      .catch(err => console.log(err))
   }
 
   render(){
@@ -93,7 +105,7 @@ class App extends React.Component {
           <ImageLinkForm 
           onInputChange={this.onInputChange}
           onButtonSubmit={this.onButtonSubmit}/>
-          <FaceRecognition imageUrl={this.state.imageUrl} />
+          <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
       </div>
     );
   }
