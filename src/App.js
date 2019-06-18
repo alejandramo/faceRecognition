@@ -63,18 +63,18 @@ class App extends React.Component {
   }
   
   onInputChange = (event) => {
-    console.log(event.target.value);
+    this.setState({input: event.target.value});
   }
 
   onButtonSubmit = () => {
     this.setState({imageUrl: this.state.input});
     app.models
       .predict(
-      Clarifai.FACE_DETECT_MODEL, 
-      this.state.input)
+        Clarifai.FACE_DETECT_MODEL, 
+        this.state.input)
       .then(
       function(response) {
-        console.log(response);
+        console.log(response.outputs[0].data.regions[0].region_info.bounding_box[0]);
       },
       function(err) {
         // there was an error
